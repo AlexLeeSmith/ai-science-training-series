@@ -1,7 +1,7 @@
 # this code is based on pieces of the first assignment from Stanford's CSE231n course, 
 # hosted at https://github.com/cs231n/cs231n.github.io with the MIT license
 
-from layers import *
+from modules.layers import *
 
 def affine_relu_forward(x, w, b):
     """

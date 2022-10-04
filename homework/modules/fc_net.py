@@ -4,8 +4,8 @@
 from builtins import object
 import numpy as np
 
-from layers import *
-from layer_utils import *
+from modules.layers import *
+from modules.layer_utils import *
 
 class TwoLayerNet(object):
     """
