@@ -1,5 +1,5 @@
 #!/bin/bash -l
-#COBALT -t 100
+#COBALT -t 60
 #COBALT -q single-gpu
 #COBALT -A ALCFAITP
 #COBALT -n 1

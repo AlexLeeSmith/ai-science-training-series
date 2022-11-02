@@ -271,7 +271,7 @@ def train_epoch(i_epoch, step_in_epoch, train_ds, val_ds, network, optimizer, BA
         mean_rate = sum / i
         stddev_rate = math.sqrt( sum2/i - mean_rate * mean_rate )
         with open(OUT_FILENAME, 'a') as outfile:
-            outfile.write(f'{parallel_threads} threads, {prefetch_buffer_size} prefetched batches, mean image/s = {mean_rate:8.2f}, standard deviation = {stddev_rate:8.2f}')
+            outfile.write(f'{parallel_threads} threads, {prefetch_buffer_size} prefetched batches, mean image/s = {mean_rate:.2f}, standard deviation = {stddev_rate:.2f}\n')
         tf.profiler.experimental.stop()
         sys.exit(0)
 
