@@ -1,0 +1,30 @@
+2 threads, 2 prefetched batches, mean image/s = 277.79, standard deviation = 426.66
+2 threads, 4 prefetched batches, mean image/s = 391.60, standard deviation = 492.38
+2 threads, 6 prefetched batches, mean image/s = 406.79, standard deviation = 509.53
+2 threads, 8 prefetched batches, mean image/s = 391.08, standard deviation = 493.32
+2 threads, 10 prefetched batches, mean image/s = 404.00, standard deviation = 512.13
+~~~~~~~~~~~~~~~
+8 threads, 2 prefetched batches, mean image/s = 423.63, standard deviation = 359.84
+8 threads, 4 prefetched batches, mean image/s = 625.98, standard deviation = 447.95
+8 threads, 6 prefetched batches, mean image/s = 814.43, standard deviation = 437.96
+8 threads, 8 prefetched batches, mean image/s = 994.83, standard deviation = 346.96
+8 threads, 10 prefetched batches, mean image/s = 1168.62, standard deviation = 4.15
+~~~~~~~~~~~~~~~
+32 threads, 2 prefetched batches, mean image/s = 604.31, standard deviation = 252.62
+32 threads, 4 prefetched batches, mean image/s = 747.67, standard deviation = 315.96
+32 threads, 6 prefetched batches, mean image/s = 892.38, standard deviation = 363.88
+32 threads, 8 prefetched batches, mean image/s = 1067.03, standard deviation = 131.76
+32 threads, 10 prefetched batches, mean image/s = 1084.29, standard deviation = 100.02
+~~~~~~~~~~~~~~~
+128 threads, 2 prefetched batches, mean image/s = 838.95, standard deviation = 89.85
+128 threads, 4 prefetched batches, mean image/s = 913.15, standard deviation = 48.72
+128 threads, 6 prefetched batches, mean image/s = 883.65, standard deviation = 59.62
+128 threads, 8 prefetched batches, mean image/s = 1003.33, standard deviation = 132.49
+128 threads, 10 prefetched batches, mean image/s = 878.32, standard deviation = 52.51
+~~~~~~~~~~~~~~~
+256 threads, 2 prefetched batches, mean image/s = 730.70, standard deviation = 66.74
+256 threads, 4 prefetched batches, mean image/s = 721.51, standard deviation = 47.55
+256 threads, 6 prefetched batches, mean image/s = 730.13, standard deviation = 48.08
+256 threads, 8 prefetched batches, mean image/s = 750.54, standard deviation = 75.44
+256 threads, 10 prefetched batches, mean image/s = 840.11, standard deviation = 197.42
+~~~~~~~~~~~~~~~
