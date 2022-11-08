@@ -17,7 +17,8 @@ import tensorflow as tf
 from argparse import ArgumentParser
 import numpy as np
 from tqdm import tqdm 
-import time
+from time import time
+import horovod.tensorflow as hvd 
 
 def get_args():
     parser = ArgumentParser(description='TensorFlow MNIST Example')
@@ -27,62 +28,97 @@ def get_args():
                         help='number of epochs to train (default: 16)')
     parser.add_argument('--lr', type=float, default=0.01, metavar='LR',
                         help='learning rate (default: 0.01)')
-    parser.add_argument('--device', default='gpu',
-                        help='Wheter this is running on cpu or gpu')
-    parser.add_argument('--num_inter', default=2, help='set number inter', type=int)
-    parser.add_argument('--num_intra', default=0, help='set number intra', type=int)
 
     return parser.parse_args()
-
-@tf.function
-def training_step(mnist_model, images, labels, loss, opt):
-    with tf.GradientTape() as tape:
-        probs = mnist_model(images, training=True)
-        loss_value = loss(labels, probs)
-        pred = tf.math.argmax(probs, axis=1)
-        equality = tf.math.equal(pred, labels)
-        accuracy = tf.math.reduce_mean(tf.cast(equality, tf.float32))
-
-    grads = tape.gradient(loss_value, mnist_model.trainable_variables)
-    opt.apply_gradients(zip(grads, mnist_model.trainable_variables))
-    return loss_value, accuracy
-
-@tf.function
-def validation_step(mnist_model, images, labels, loss):
-    probs = mnist_model(images, training=False)
-    pred = tf.math.argmax(probs, axis=1)
-    equality = tf.math.equal(pred, labels)
-    accuracy = tf.math.reduce_mean(tf.cast(equality, tf.float32))
-    loss_value = loss(labels, probs)
-    return loss_value, accuracy
 
 def get_dataset(batch_size):
     (mnist_images, mnist_labels), (x_test, y_test) = tf.keras.datasets.mnist.load_data(path='mnist.npz')
 
-    dataset = tf.data.Dataset.from_tensor_slices(
-        (tf.cast(mnist_images[..., tf.newaxis] / 255.0, tf.float32),
-                tf.cast(mnist_labels, tf.int64))
-    )
-    test_dset = tf.data.Dataset.from_tensor_slices(
-        (tf.cast(x_test[..., tf.newaxis] / 255.0, tf.float32),
-                tf.cast(y_test, tf.int64))
-    )
+    dataset = tf.data.Dataset.from_tensor_slices((
+        tf.cast(mnist_images[..., tf.newaxis] / 255.0, tf.float32),
+        tf.cast(mnist_labels, tf.int64)
+    ))
+    test_dset = tf.data.Dataset.from_tensor_slices((
+        tf.cast(x_test[..., tf.newaxis] / 255.0, tf.float32),
+        tf.cast(y_test, tf.int64)
+    ))
 
     # shuffle the dataset, with shuffle buffer to be 10000
     dataset = dataset.repeat().shuffle(10000).batch(batch_size)
     test_dset  = test_dset.repeat().batch(batch_size)
 
+    dataset = dataset.shard(num_shards=hvd.size(), index=hvd.rank())
+    test_dset = test_dset.shard(num_shards=hvd.size(), index=hvd.rank())
+
     return dataset, test_dset
 
 def train_model(batch_size, epochs, dataset, test_dset, mnist_model, loss, opt):
+    @tf.function
+    def training_step(_mnist_model, _images, _labels, _loss, _opt):
+        with tf.GradientTape() as tape:
+            probs = _mnist_model(_images, training=True)
+            loss_value = _loss(_labels, probs)
+            pred = tf.math.argmax(probs, axis=1)
+            equality = tf.math.equal(pred, _labels)
+            accuracy = tf.math.reduce_mean(tf.cast(equality, tf.float32))
+
+        tape = hvd.DistributedGradientTape(tape)
+        grads = tape.gradient(loss_value, _mnist_model.trainable_variables)
+        _opt.apply_gradients(zip(grads, _mnist_model.trainable_variables))
+        return loss_value, accuracy
+
+    @tf.function
+    def validation_step(_mnist_model, _images, _labels, _loss):
+        probs = _mnist_model(_images, training=False)
+        pred = tf.math.argmax(probs, axis=1)
+        equality = tf.math.equal(pred, _labels)
+        accuracy = tf.math.reduce_mean(tf.cast(equality, tf.float32))
+        loss_value = _loss(_labels, probs)
+        return loss_value, accuracy
+
+    def training_epoch(_dataset, _test_dset, _mnist_model, _loss, _optimizer, _checkpoint_dir, _checkpoint, _nstep, _ntest_step, _epochNum):
+        train_loss = 0.0
+        train_acc = 0.0
+        for batchNum, (images, labels) in enumerate(_dataset.take(_nstep)):
+            loss_value, acc = training_step(_mnist_model, images, labels, _loss, _optimizer)
+            train_loss += loss_value / _nstep
+            train_acc += acc / _nstep
+
+            # HVD - broadcast model and parameters from rank 0 to the other ranks
+            if (_epochNum == 0 and batchNum==0):
+                hvd.broadcast_variables(_mnist_model.variables, root_rank=0)
+                hvd.broadcast_variables(_optimizer.variables(), root_rank=0)
+
+            if batchNum % 100 == 0 and hvd.rank() == 0: 
+                _checkpoint.save(_checkpoint_dir)
+                print('Epoch - %d, step #%06d/%06d\tLoss: %.6f' % (_epochNum, batchNum, _nstep, loss_value))
+
+        # HVD - average the training metrics 
+        mean_train_loss = hvd.allreduce(train_loss, average=True)
+        mean_train_acc = hvd.allreduce(train_acc, average=True)
+
+        # Testing
+        test_acc = 0.0
+        test_loss = 0.0
+        for batchNum, (images, labels) in enumerate(_test_dset.take(_ntest_step)):
+            loss_value, acc = validation_step(_mnist_model, images, labels, _loss)
+            test_acc += acc / _ntest_step
+            test_loss += loss_value / _ntest_step
+        
+        # HVD - average the test metrics 
+        mean_test_loss = hvd.allreduce(test_loss, average=True)
+        mean_test_acc = hvd.allreduce(test_acc, average=True)
+        
+        return mean_train_loss, mean_train_acc, mean_test_loss, mean_test_acc
+
     checkpoint_dir = './checkpoints/tf2_mnist'
     checkpoint = tf.train.Checkpoint(model=mnist_model, optimizer=opt)
 
     nsamples = len(list(dataset))
     ntests = len(list(test_dset))
 
-    nstep = nsamples//batch_size
-    ntest_step = ntests//batch_size
+    nstep = int(nsamples / batch_size / hvd.size())
+    ntest_step = int(ntests / batch_size / hvd.size())
     metrics={}
     metrics['train_acc'] = []
     metrics['valid_acc'] = []
@@ -90,43 +126,32 @@ def train_model(batch_size, epochs, dataset, test_dset, mnist_model, loss, opt):
     metrics['valid_loss'] = []
     metrics['time_per_epochs'] = []
     for ep in range(epochs):
-        training_loss = 0.0
-        training_acc = 0.0
-        tt0 = time.time()
-        for batch, (images, labels) in enumerate(dataset.take(nstep)):
-            loss_value, acc = training_step(mnist_model, images, labels, loss, opt)
-            training_loss += loss_value/nstep
-            training_acc += acc/nstep
-            if batch % 100 == 0: 
-                checkpoint.save(checkpoint_dir)
-                print('Epoch - %d, step #%06d/%06d\tLoss: %.6f' % (ep, batch, nstep, loss_value))
-        # Testing
-        test_acc = 0.0
-        test_loss = 0.0
-        for batch, (images, labels) in enumerate(test_dset.take(ntest_step)):
-            loss_value, acc = validation_step(mnist_model, images, labels, loss)
-            test_acc += acc/ntest_step
-            test_loss += loss_value/ntest_step
-        tt1 = time.time()
-        print('E[%d], train Loss: %.6f, training Acc: %.3f, val loss: %.3f, val Acc: %.3f\t Time: %.3f seconds' % (ep, training_loss, training_acc, test_loss, test_acc, tt1 - tt0))
-        metrics['train_acc'].append(training_acc.numpy())
-        metrics['train_loss'].append(training_loss.numpy())
-        metrics['valid_acc'].append(test_acc.numpy())
-        metrics['valid_loss'].append(test_loss.numpy())
-        metrics['time_per_epochs'].append(tt1 - tt0) 
-    checkpoint.save(checkpoint_dir)
-    np.savetxt("metrics.dat", np.array([metrics['train_acc'], metrics['train_loss'], metrics['valid_acc'], metrics['valid_loss'], metrics['time_per_epochs']]).transpose())
+        tt0 = time()
+        training_loss, training_acc, test_loss, test_acc = training_epoch(dataset, test_dset, mnist_model, loss, opt, checkpoint_dir, checkpoint, nstep, ntest_step, ep)
+        tt1 = time()
+        if hvd.rank() == 0: 
+            print('E[%d], train Loss: %.6f, training Acc: %.3f, val loss: %.3f, val Acc: %.3f\t Time: %.3f seconds' % (ep, training_loss, training_acc, test_loss, test_acc, tt1 - tt0))
+            metrics['train_acc'].append(training_acc.numpy())
+            metrics['train_loss'].append(training_loss.numpy())
+            metrics['valid_acc'].append(test_acc.numpy())
+            metrics['valid_loss'].append(test_loss.numpy())
+            metrics['time_per_epochs'].append(tt1 - tt0)
+        
+    if hvd.rank() == 0: 
+        checkpoint.save(checkpoint_dir)
+        np.savetxt(f"other/metrics{hvd.size()}.dat", np.array([metrics['train_acc'], metrics['train_loss'], metrics['valid_acc'], metrics['valid_loss'], metrics['time_per_epochs']]).transpose())
 
 if __name__ == "__main__":
     args = get_args()
 
-    if args.device == 'cpu':
-        tf.config.threading.set_intra_op_parallelism_threads(args.num_intra)
-        tf.config.threading.set_inter_op_parallelism_threads(args.num_inter)
-    else:
-        gpus = tf.config.experimental.list_physical_devices('GPU')
-        for gpu in gpus:
-            tf.config.experimental.set_memory_growth(gpu, True)
+    hvd.init()
+
+    # Get the list of GPU
+    gpus = tf.config.experimental.list_physical_devices('GPU')
+    # Ping GPU to the rank
+    tf.config.experimental.set_visible_devices(gpus[hvd.local_rank()], 'GPU')
+    for gpu in gpus:
+        tf.config.experimental.set_memory_growth(gpu, True)
 
     dataset, test_dset = get_dataset(args.batch_size)
 
@@ -141,10 +166,11 @@ if __name__ == "__main__":
         tf.keras.layers.Dense(10, activation='softmax')
     ])
     loss = tf.losses.SparseCategoricalCrossentropy()
-    opt = tf.optimizers.Adam(args.lr)
+    opt = tf.optimizers.Adam(learning_rate=args.lr*hvd.size())
 
-    t0 = time.time()
+    t0 = time()
     train_model(args.batch_size, args.epochs, dataset, test_dset, mnist_model, loss, opt)
-    t1 = time.time()
+    t1 = time()
     
-    print("Total training time: %s seconds" %(t1 - t0))
+    if hvd.rank() == 0: 
+        print("Total training time: %s seconds" %(t1 - t0))
