@@ -1,0 +1,83 @@
+# I am rank 0 of 1
+E[0], train Loss: 0.226574, training Acc: 0.932, val loss: 0.061, val Acc: 0.981	 Time: 7.975 seconds
+E[1], train Loss: 0.094982, training Acc: 0.971, val loss: 0.043, val Acc: 0.985	 Time: 1.429 seconds
+E[2], train Loss: 0.078967, training Acc: 0.976, val loss: 0.048, val Acc: 0.986	 Time: 1.421 seconds
+E[3], train Loss: 0.073957, training Acc: 0.977, val loss: 0.036, val Acc: 0.989	 Time: 1.418 seconds
+E[4], train Loss: 0.064441, training Acc: 0.981, val loss: 0.037, val Acc: 0.989	 Time: 1.417 seconds
+E[5], train Loss: 0.067117, training Acc: 0.980, val loss: 0.039, val Acc: 0.988	 Time: 1.443 seconds
+E[6], train Loss: 0.056991, training Acc: 0.983, val loss: 0.044, val Acc: 0.988	 Time: 1.465 seconds
+E[7], train Loss: 0.057833, training Acc: 0.983, val loss: 0.040, val Acc: 0.988	 Time: 1.538 seconds
+E[8], train Loss: 0.058052, training Acc: 0.983, val loss: 0.042, val Acc: 0.988	 Time: 1.403 seconds
+E[9], train Loss: 0.053783, training Acc: 0.984, val loss: 0.046, val Acc: 0.987	 Time: 1.412 seconds
+E[10], train Loss: 0.056041, training Acc: 0.983, val loss: 0.047, val Acc: 0.987	 Time: 1.431 seconds
+E[11], train Loss: 0.053097, training Acc: 0.984, val loss: 0.045, val Acc: 0.988	 Time: 1.424 seconds
+E[12], train Loss: 0.049864, training Acc: 0.985, val loss: 0.037, val Acc: 0.989	 Time: 1.436 seconds
+E[13], train Loss: 0.050882, training Acc: 0.985, val loss: 0.049, val Acc: 0.988	 Time: 1.655 seconds
+E[14], train Loss: 0.052087, training Acc: 0.984, val loss: 0.040, val Acc: 0.990	 Time: 1.440 seconds
+E[15], train Loss: 0.050645, training Acc: 0.985, val loss: 0.041, val Acc: 0.987	 Time: 1.448 seconds
+Total training time: 29.760247 seconds
+# I am rank 0 of 2
+# I am rank 1 of 2
+E[0], train Loss: 0.732003, training Acc: 0.779, val loss: 0.157, val Acc: 0.951	 Time: 11.041 seconds
+E[1], train Loss: 0.244783, training Acc: 0.926, val loss: 0.082, val Acc: 0.974	 Time: 1.735 seconds
+E[2], train Loss: 0.185199, training Acc: 0.944, val loss: 0.080, val Acc: 0.975	 Time: 2.871 seconds
+E[3], train Loss: 0.161898, training Acc: 0.950, val loss: 0.067, val Acc: 0.979	 Time: 2.816 seconds
+E[4], train Loss: 0.148778, training Acc: 0.955, val loss: 0.066, val Acc: 0.980	 Time: 1.748 seconds
+E[5], train Loss: 0.142198, training Acc: 0.956, val loss: 0.061, val Acc: 0.982	 Time: 1.655 seconds
+E[6], train Loss: 0.142599, training Acc: 0.957, val loss: 0.067, val Acc: 0.980	 Time: 1.693 seconds
+E[7], train Loss: 0.136131, training Acc: 0.959, val loss: 0.053, val Acc: 0.984	 Time: 2.803 seconds
+E[8], train Loss: 0.132289, training Acc: 0.960, val loss: 0.060, val Acc: 0.981	 Time: 1.883 seconds
+E[9], train Loss: 0.127604, training Acc: 0.961, val loss: 0.053, val Acc: 0.984	 Time: 1.670 seconds
+E[10], train Loss: 0.129907, training Acc: 0.960, val loss: 0.060, val Acc: 0.981	 Time: 1.729 seconds
+E[11], train Loss: 0.122505, training Acc: 0.963, val loss: 0.053, val Acc: 0.984	 Time: 1.622 seconds
+E[12], train Loss: 0.122180, training Acc: 0.963, val loss: 0.052, val Acc: 0.985	 Time: 1.703 seconds
+E[13], train Loss: 0.117902, training Acc: 0.965, val loss: 0.050, val Acc: 0.984	 Time: 1.694 seconds
+E[14], train Loss: 0.118187, training Acc: 0.964, val loss: 0.061, val Acc: 0.982	 Time: 1.658 seconds
+E[15], train Loss: 0.122824, training Acc: 0.963, val loss: 0.065, val Acc: 0.981	 Time: 1.670 seconds
+Total training time: 39.998301 seconds
+# I am rank 1 of 4
+# I am rank 2 of 4
+# I am rank 3 of 4
+# I am rank 0 of 4
+E[0], train Loss: 1.193592, training Acc: 0.707, val loss: 0.211, val Acc: 0.939	 Time: 11.418 seconds
+E[1], train Loss: 0.367467, training Acc: 0.888, val loss: 0.150, val Acc: 0.957	 Time: 1.561 seconds
+E[2], train Loss: 0.302117, training Acc: 0.908, val loss: 0.124, val Acc: 0.961	 Time: 1.391 seconds
+E[3], train Loss: 0.275677, training Acc: 0.916, val loss: 0.109, val Acc: 0.968	 Time: 1.392 seconds
+E[4], train Loss: 0.260439, training Acc: 0.920, val loss: 0.104, val Acc: 0.967	 Time: 1.399 seconds
+E[5], train Loss: 0.249214, training Acc: 0.925, val loss: 0.099, val Acc: 0.969	 Time: 1.382 seconds
+E[6], train Loss: 0.228655, training Acc: 0.931, val loss: 0.094, val Acc: 0.971	 Time: 1.370 seconds
+E[7], train Loss: 0.226893, training Acc: 0.930, val loss: 0.087, val Acc: 0.973	 Time: 1.378 seconds
+E[8], train Loss: 0.220407, training Acc: 0.934, val loss: 0.083, val Acc: 0.976	 Time: 1.377 seconds
+E[9], train Loss: 0.207945, training Acc: 0.936, val loss: 0.088, val Acc: 0.973	 Time: 1.361 seconds
+E[10], train Loss: 0.222420, training Acc: 0.933, val loss: 0.090, val Acc: 0.973	 Time: 1.383 seconds
+E[11], train Loss: 0.207213, training Acc: 0.938, val loss: 0.074, val Acc: 0.977	 Time: 1.377 seconds
+E[12], train Loss: 0.206363, training Acc: 0.937, val loss: 0.089, val Acc: 0.975	 Time: 1.364 seconds
+E[13], train Loss: 0.201251, training Acc: 0.938, val loss: 0.091, val Acc: 0.971	 Time: 1.384 seconds
+E[14], train Loss: 0.204489, training Acc: 0.939, val loss: 0.076, val Acc: 0.978	 Time: 1.384 seconds
+E[15], train Loss: 0.194463, training Acc: 0.942, val loss: 0.073, val Acc: 0.980	 Time: 1.393 seconds
+Total training time: 32.317968 seconds
+# I am rank 6 of 8
+# I am rank 5 of 8
+# I am rank 0 of 8
+# I am rank 1 of 8
+# I am rank 3 of 8
+# I am rank 7 of 8
+# I am rank 4 of 8
+# I am rank 2 of 8
+E[0], train Loss: 18.085133, training Acc: 0.109, val loss: 2.302, val Acc: 0.113	 Time: 18.499 seconds
+E[1], train Loss: 2.301561, training Acc: 0.110, val loss: 2.302, val Acc: 0.113	 Time: 1.457 seconds
+E[2], train Loss: 2.301663, training Acc: 0.111, val loss: 2.302, val Acc: 0.113	 Time: 1.456 seconds
+E[3], train Loss: 2.301541, training Acc: 0.113, val loss: 2.302, val Acc: 0.101	 Time: 1.459 seconds
+E[4], train Loss: 2.301558, training Acc: 0.112, val loss: 2.302, val Acc: 0.113	 Time: 1.479 seconds
+E[5], train Loss: 2.301847, training Acc: 0.110, val loss: 2.302, val Acc: 0.101	 Time: 1.459 seconds
+E[6], train Loss: 2.302166, training Acc: 0.110, val loss: 2.303, val Acc: 0.101	 Time: 1.467 seconds
+E[7], train Loss: 2.302185, training Acc: 0.109, val loss: 2.302, val Acc: 0.113	 Time: 1.446 seconds
+E[8], train Loss: 2.301930, training Acc: 0.111, val loss: 2.302, val Acc: 0.113	 Time: 1.463 seconds
+E[9], train Loss: 2.301545, training Acc: 0.113, val loss: 2.302, val Acc: 0.113	 Time: 1.465 seconds
+E[10], train Loss: 2.301549, training Acc: 0.114, val loss: 2.303, val Acc: 0.113	 Time: 1.474 seconds
+E[11], train Loss: 2.301932, training Acc: 0.111, val loss: 2.302, val Acc: 0.101	 Time: 1.458 seconds
+E[12], train Loss: 2.302159, training Acc: 0.110, val loss: 2.302, val Acc: 0.101	 Time: 1.462 seconds
+E[13], train Loss: 2.302454, training Acc: 0.109, val loss: 2.302, val Acc: 0.101	 Time: 1.493 seconds
+E[14], train Loss: 2.302330, training Acc: 0.107, val loss: 2.304, val Acc: 0.101	 Time: 1.480 seconds
+E[15], train Loss: 2.302014, training Acc: 0.110, val loss: 2.304, val Acc: 0.101	 Time: 1.646 seconds
+Total training time: 40.669453 seconds
